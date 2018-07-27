@@ -57,10 +57,12 @@ function! VimuxSendText(text)
 endfunction
 
 function! VimuxSendKeys(keys)
-  if exists("g:VimuxRunnerIndex")
+  if _VimuxHasMarkedPane()
+    call _VimuxTmux("send-keys -t '~' ".a:keys)
+  elseif exists("g:VimuxRunnerIndex")
     call _VimuxTmux("send-keys -t ".g:VimuxRunnerIndex." ".a:keys)
   else
-    echo "No vimux runner pane/window. Create one with VimuxOpenRunner"
+    echo "No vimux runner pane/window. Create one with VimuxOpenRunner or mark a pane"
   endif
 endfunction
 
@@ -160,6 +162,10 @@ function! _VimuxTmuxIndex()
   else
     return _VimuxTmuxWindowIndex()
   end
+endfunction
+
+function! _VimuxHasMarkedPane()
+  return match(_VimuxTmux("display -t '~' -p '#I.#P'"), "no marked target") == -1
 endfunction
 
 function! _VimuxTmuxPaneIndex()
