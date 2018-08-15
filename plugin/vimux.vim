@@ -105,7 +105,9 @@ function! VimuxTogglePane()
 endfunction
 
 function! VimuxZoomRunner()
-  if exists("g:VimuxRunnerIndex")
+  if _VimuxHasMarkedPane()
+    call _VimuxTmux("resize-pane -Z -t '~'")
+  elseif exists("g:VimuxRunnerIndex")
     if _VimuxRunnerType() == "pane"
       call _VimuxTmux("resize-pane -Z -t ".g:VimuxRunnerIndex)
     elseif _VimuxRunnerType() == "window"
